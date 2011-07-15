@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+
+import re
+import sqlite3
+
+if __name__ == '__main__':
+    pattern = re.compile(r'^/home/bjs/photos.test')
+    db = sqlite3.connect('/home/bjs/.shotwell/data/photo.db')
+
+    c1 = db.cursor()
+    c1.execute('select id, filename from PhotoTable')
+    rows = c1.fetchall()
+    for (i, f) in rows:
+        f = pattern.sub('/home/bjs/photos', f)
+        c1.execute('update PhotoTable set filename = :1 where id = :2', (f, i))
+    c1.close()
+    db.commit()
